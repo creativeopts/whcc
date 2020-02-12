@@ -1,5 +1,7 @@
 <html>
-<? include ("inc_whcc_functions.php"); ?>
+<? 
+        include ("inc_whcc_functions.php"); 
+?>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
@@ -37,7 +39,16 @@
 
 <?
 $maxId=GetMaxNewsItem();
-echo "Got Max Id of:  ".$maxId."<br>";
+echo "Retrieving News Feeds (".$maxId.") ......<br>";
+    $use_db=isset($_REQUEST['db']) ? $_REQUEST['db'] : 0;
+
+    if ($use_db==1)
+    {
+        $link_apiURL = 'inc_whcc_curl_db.php?mid='.$maxId;
+    } else
+    {
+        $link_apiURL = 'inc_whcc_curl.php?mid='.$maxId;
+    }
 ?>
     
   <!-- Once the page is loaded, initialize the plug-in. -->
@@ -47,7 +58,7 @@ echo "Got Max Id of:  ".$maxId."<br>";
           $handler = $('li', $tiles),
           page = 1,
           isLoading = false,
-          apiURL = 'inc_whcc_curl.php?mid=<?=$maxId?>',
+          apiURL = '<?=$link_apiURL?>',
           lastRequestTimestamp = 0,
           fadeInDelay = 500,
           $window = $(window),
@@ -69,8 +80,8 @@ echo "Got Max Id of:  ".$maxId."<br>";
       function onScroll(event) {
         // Only check when we're not still waiting for data.
         if (!isLoading) {
-          // Check if we're within 300 pixels of the bottom edge of the browser window.
-          var closeToBottom = ($window.scrollTop() + $window.height() > $document.height() - 300);
+          // Check if we're within 100 pixels of the bottom edge of the browser window.
+          var closeToBottom = ($window.scrollTop() + $window.height() > $document.height() - 100);
           if (closeToBottom) {
             // Only allow requests every half second
             var currentTime = new Date().getTime();
